@@ -1,0 +1,6 @@
+# Les sous-projets (backend/, mobile/) ont leur propre .gitignore.
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.env

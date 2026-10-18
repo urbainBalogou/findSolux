@@ -1,0 +1,28 @@
+# Alternative à XAMPP : MySQL 8.4, même moteur que la production (ADR-011).
+# Ne pas lancer en même temps que le MySQL de XAMPP (même port 3306),
+# ou changer FORWARD_DB_PORT.
+services:
+  db:
+    image: mysql:8.4
+    container_name: findsolux-db
+    restart: unless-stopped
+    environment:
+      # Développement local uniquement : root sans mot de passe, comme XAMPP,
+      # pour garder le même backend/.env quel que soit le serveur utilisé.
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: findsolux
+      TZ: Africa/Lome
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    ports:
+      - "127.0.0.1:${FORWARD_DB_PORT:-3306}:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:
