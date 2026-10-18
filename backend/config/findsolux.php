@@ -9,6 +9,17 @@ return [
         'longitude' => [-0.3, 1.9],
     ],
 
+    // Fuseau des horaires d'ouverture (« ouvert maintenant »).
+    'timezone' => 'Africa/Lome',
+
+    'search' => [
+        'default_radius_km' => 10,
+        'max_radius_km' => 30,
+        'max_results' => 30,
+        // Plus grand rayon d'intervention d'un garagiste qui se déplace.
+        'max_service_radius_km' => 50,
+    ],
+
     'photos' => [
         'disk' => env('PHOTOS_DISK', 'public'),
         'max_per_business' => 8,

@@ -257,5 +257,6 @@ Validés le 15 octobre 2026.
 | R7 | §3.1 C2, §3.2 P1 | Attributs « se déplace » (avec rayon d'intervention) et « dépannage 24 h/24 », filtre « dépannage sur place », type de véhicule « tricycle ». |
 | ADR-004 | §3.3, §6 | Back-office Filament ; pas d'interface web pour les garagistes en phase 1. |
 | ADR-011 | §6 | Base de données MySQL 8 au lieu de PostgreSQL + PostGIS ; géolocalisation par latitude/longitude et `ST_Distance_Sphere`. |
+| ADR-012 | §3.1 C1, §6 | Cartographie Google Maps ; écran de recherche « carte d'abord » avec recherche de lieu et cartes des garages triées par distance. |
 | ADR-010 | §6, §13 | Une seule application mobile pour les clients et les garagistes (deux espaces). |
 | R13 | §1.2, §12 | Extension vers les métiers techniques et le dépannage (électricité, plomberie, froid et climatisation, menuiserie…). La beauté reste hors périmètre (projet CHARM). |

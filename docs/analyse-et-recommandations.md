@@ -24,7 +24,7 @@ dans le [modèle de données](modele-donnees.md) et le [backlog](backlog-mvp.md)
 | R6 | Rôle « agent terrain » et revendication de fiche | Abandonné (voir ci-dessous) |
 | R7 | Mécaniciens mobiles et dépannage | Adopté |
 | R8 | Back-office Filament, espace pro dans l'app mobile | Adopté (ADR-004) |
-| R9 | Cartographie : tuiles OSM via fournisseur, liste par défaut | Adopté (ADR-005) |
+| R9 | Cartographie : tuiles OSM via fournisseur, liste par défaut | Remplacé par ADR-012 (Google Maps) |
 | R10 | OTP par SMS d'abord, protection contre la fraude SMS | Adopté (ADR-007) |
 | R11 | Pièces d'identité : stockage privé et durée de conservation | Adopté (ADR-006) |
 | R12 | Réalisme économique de la phase Lomé | Pour information |

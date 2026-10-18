@@ -32,7 +32,7 @@ n'est pas effacée : on ajoute une nouvelle ADR qui la remplace.
 
 - **Décision** : Flutter, Android en priorité (minSdk 26 = Android 8), iOS ensuite.
 - **Socle** : Riverpod (état), go_router (navigation), dio (HTTP), cache local pour les fiches consultées et les favoris, `cached_network_image` pour les photos.
-- **Cartographie** : `flutter_map` avec des tuiles OpenStreetMap servies par un fournisseur ou auto-hébergées (PMTiles du Togo) — jamais `tile.openstreetmap.org` en production. Liste par défaut, carte à la demande.
+- **Cartographie** : ~~`flutter_map` et tuiles OpenStreetMap, liste par défaut~~ — remplacé par ADR-012 (Google Maps, carte d'abord).
 - **Taille** : publication en App Bundle (AAB) et APK par architecture (`--split-per-abi`) pour rester sous 30 Mo.
 
 ## ADR-006 — Stockage des fichiers
@@ -69,4 +69,17 @@ n'est pas effacée : on ajoute une nouvelle ADR qui la remplace.
 - **Géolocalisation** : `latitude` et `longitude` en `DECIMAL(10,7)` avec un index composite. La recherche de proximité filtre d'abord par un rectangle autour du point (index), puis calcule la distance exacte avec `ST_Distance_Sphere` (disponible sur MySQL 8 et MariaDB 10.4+). Les contours de quartiers (polygones) ne sont pas stockés en phase 1 : la recherche par quartier part du centre du quartier.
 - **Évolution** : si le volume l'exige, ajout d'une colonne `POINT SRID 4326` avec index spatial (MySQL 8).
 - **Tests** : base `findsolux_test` sur le même moteur que le développement.
+
+## ADR-012 — Google Maps et recherche « carte d'abord »
+
+- **Contexte** : choix de l'équipe (18 octobre 2026). Remplace la cartographie d'ADR-005 et la recommandation R9.
+- **Décision** : carte Google Maps (`google_maps_flutter`) en plein écran sur l'écran Rechercher, avec :
+  - une barre de recherche de lieu en haut ; la requête part vers l'API (`GET /places/search`), qui cherche d'abord dans les quartiers connus puis interroge l'API Places de Google ;
+  - un bouton « ma position » ;
+  - en bas, en surimpression, des cartes de garages triées du plus proche au plus éloigné, la distance affichée en bas de chaque carte (`GET /businesses/search`).
+- **Clés** : deux clés distinctes.
+  - Android : `MAPS_API_KEY` dans `mobile/android/local.properties` (non suivi par Git), restreinte dans la console Google Cloud à l'application Android (nom de paquet + empreinte SHA-1) et au « Maps SDK for Android ».
+  - Serveur : `GOOGLE_MAPS_SERVER_KEY` dans `backend/.env`, restreinte à l'« API Places (New) » et à l'adresse IP du serveur. Elle n'est jamais envoyée au téléphone.
+- **Coûts** : l'affichage de la carte dans l'application mobile n'est pas facturé ; les recherches de lieux le sont au-delà du quota gratuit. Le serveur les met en cache 24 h, limite leur fréquence par adresse IP et répond d'abord avec les quartiers connus, sans appel à Google.
+- **Classement** : strictement par distance pour l'instant. Quand les formules existeront (lot 9), R2 prévoit de remonter les abonnés à distance comparable : à rediscuter à ce moment-là.
 

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // Clé serveur (API Places) : distincte de la clé de l'application mobile,
+    // jamais envoyée au téléphone.
+    'google_maps' => [
+        'server_key' => env('GOOGLE_MAPS_SERVER_KEY'),
+    ],
+
 ];

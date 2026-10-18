@@ -50,9 +50,10 @@ Ordre indicatif : chaque lot s'appuie sur les précédents.
 
 ## Lot 4 — Recherche (C1, C2)
 
-- [ ] API de recherche géolocalisée et par quartier, filtres, pagination.
-- [ ] Classement par tranches de distance puis formule (R2).
-- [ ] Application : liste par défaut, carte à la demande, filtres.
+- [x] API `GET /businesses/search` : garages publiés autour d'un point, du plus proche au plus éloigné, rayon 10 km par défaut (30 au plus), garagistes qui se déplacent visibles dans leur zone d'intervention, filtres véhicule, service et « ouvert maintenant » (horaires de Lomé).
+- [x] API `GET /places/search` : quartiers connus (sans accent requis) puis lieux Google (clé serveur, cache 24 h, lieux hors Togo écartés).
+- [ ] Application : carte Google Maps, recherche de lieu, « ma position », cartes des garages en bas triées par distance (ADR-012), filtres.
+- [ ] Classement par formule à distance comparable (R2) : à rediscuter avec le lot 9.
 
 ## Lot 5 — Fiche publique et contact (C3, C4)
 

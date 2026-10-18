@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Services\Otp\OtpSender;
 use App\Services\Otp\Senders\ArrayOtpSender;
 use App\Services\Otp\Senders\LogOtpSender;
+use App\Services\Places\GooglePlaces;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -19,6 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(GooglePlaces::class, fn () => new GooglePlaces(config('services.google_maps.server_key')));
+
         $this->app->singleton(OtpSender::class, function ($app) {
             $driver = config('otp.driver');
 
@@ -44,5 +47,8 @@ class AppServiceProvider extends ServiceProvider
         // protections sont par numéro, dans OtpService.
         RateLimiter::for('otp-request', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('otp-verify', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
+        RateLimiter::for('search', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
+        // Chaque recherche de lieu peut déclencher un appel facturé à Google.
+        RateLimiter::for('places', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
     }
 }
