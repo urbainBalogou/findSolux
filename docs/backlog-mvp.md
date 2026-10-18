@@ -45,14 +45,15 @@ Ordre indicatif : chaque lot s'appuie sur les précédents.
 - [x] API photos : 8 au maximum, redimensionnées (1 280 px), converties en WebP avec vignette 400 px, métadonnées GPS supprimées ; ordre et suppression.
 - [x] Application : inscription express sur un seul écran (nom, WhatsApp prérempli avec le numéro du compte, position GPS sur place avec précision affichée, quartier proposé automatiquement, véhicules, services).
 - [x] Application : fiche avec éléments à compléter ; écrans informations, services et prix (fourchette par service), horaires (lun–sam 8 h–18 h proposés), photos (appareil photo ou galerie, réduites avant envoi, photo principale, suppression).
-- [ ] Carte pour ajuster la position à la main (avec le fournisseur de tuiles, lot 4).
+- [ ] Carte Google pour ajuster la position du garage à la main.
 - [ ] Photos visibles publiquement selon la formule (lot 9) : le cahier des charges réserve les photos aux formules payantes.
 
 ## Lot 4 — Recherche (C1, C2)
 
 - [x] API `GET /businesses/search` : garages publiés autour d'un point, du plus proche au plus éloigné, rayon 10 km par défaut (30 au plus), garagistes qui se déplacent visibles dans leur zone d'intervention, filtres véhicule, service et « ouvert maintenant » (horaires de Lomé).
 - [x] API `GET /places/search` : quartiers connus (sans accent requis) puis lieux Google (clé serveur, cache 24 h, lieux hors Togo écartés).
-- [ ] Application : carte Google Maps, recherche de lieu, « ma position », cartes des garages en bas triées par distance (ADR-012), filtres.
+- [x] Application : carte Google Maps plein écran, recherche de lieu (via l'API), bouton « ma position », « Rechercher dans cette zone » après un déplacement de la carte, cartes des garages en bas triées par distance avec la distance tout en bas, repères synchronisés avec les cartes, filtres « ouvert maintenant » et véhicule, rayon élargi si aucun résultat (ADR-012).
+- [x] Clés Google hors Git : `mobile/android/local.properties` (Android), `ios/Flutter/Secrets.xcconfig` (iOS), `backend/.env` (serveur).
 - [ ] Classement par formule à distance comparable (R2) : à rediscuter avec le lot 9.
 
 ## Lot 5 — Fiche publique et contact (C3, C4)

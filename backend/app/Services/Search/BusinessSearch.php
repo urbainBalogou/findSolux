@@ -21,7 +21,7 @@ class BusinessSearch
 
     /**
      * Fiches publiées, de la plus proche à la plus éloignée. Chaque fiche porte
-     * `distance_m` (mètres) et `is_open_now`.
+     * `distance_m` (mètres), `is_open_now` et `opening_hours_exists`.
      *
      * @param  array{vehicle_type_id?: ?int, service_id?: ?int, open_now?: bool}  $filters
      * @return Collection<int, Business>
@@ -59,6 +59,7 @@ class BusinessSearch
             ->when($filters['open_now'] ?? false, fn (Builder $query) => $query->whereRaw(self::OPEN_NOW, $openNowBindings))
             ->orderBy('distance_m')
             ->limit($limit)
+            ->withExists('openingHours')
             ->with(['vehicleTypes:id', 'services:id,business_id,service_id', 'photos'])
             ->get();
     }

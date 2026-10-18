@@ -8,6 +8,9 @@ import 'package:findsolux/features/pro/data/my_business_repository.dart';
 import 'package:findsolux/features/pro/domain/my_business.dart';
 import 'package:findsolux/features/reference/data/reference_repository.dart';
 import 'package:findsolux/features/reference/domain/reference_data.dart';
+import 'package:findsolux/features/search/data/search_repository.dart';
+import 'package:findsolux/features/search/domain/search_models.dart';
+import 'package:findsolux/features/search/presentation/search_screen.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -204,13 +207,79 @@ class FakeLocationService implements LocationService {
       longitude: 1.1550,
       accuracyMeters: 8,
     ),
-  ]);
+  ]) : error = null;
 
-  final LocationFix fix;
+  /// Localisation impossible (GPS coupé, autorisation refusée…).
+  FakeLocationService.failing(String message)
+    : fix = null,
+      error = LocationException(message);
+
+  final LocationFix? fix;
+  final LocationException? error;
+  var calls = 0;
 
   @override
-  Future<LocationFix> currentPosition() async => fix;
+  Future<LocationFix> currentPosition() async {
+    calls++;
+    if (error != null) throw error!;
+    return fix!;
+  }
 }
+
+/// Recherche simulée : renvoie [garages] et [places], et garde les requêtes.
+class FakeSearchRepository implements SearchRepository {
+  FakeSearchRepository({this.garages = const [], this.places = const []});
+
+  List<GarageResult> garages;
+  List<PlaceResult> places;
+  final queries = <SearchQuery>[];
+  final placeQueries = <String>[];
+
+  SearchQuery? get lastQuery => queries.lastOrNull;
+
+  @override
+  Future<List<GarageResult>> searchGarages(SearchQuery query) async {
+    queries.add(query);
+    return garages;
+  }
+
+  @override
+  Future<List<PlaceResult>> searchPlaces(String text) async {
+    placeQueries.add(text);
+    return places;
+  }
+}
+
+GarageResult garageResult({
+  int id = 1,
+  String name = 'Garage de la Paix',
+  int distanceMeters = 300,
+  bool isOpenNow = true,
+  bool hasOpeningHours = true,
+  List<int> serviceIds = const [100, 101, 102],
+}) {
+  return GarageResult(
+    id: id,
+    name: name,
+    districtId: adidogome.id,
+    landmark: 'Près du marché',
+    latitude: 6.2101 + id / 1000,
+    longitude: 1.1547,
+    distanceMeters: distanceMeters,
+    isOpenNow: isOpenNow,
+    hasOpeningHours: hasOpeningHours,
+    isMobile: false,
+    is24h: false,
+    phone: '+22890123456',
+    whatsappPhone: '+22890123456',
+    vehicleTypeIds: const [2],
+    serviceIds: serviceIds,
+    photoThumbnailUrl: null,
+  );
+}
+
+/// Texte d'aide de la barre de recherche de l'écran d'accueil.
+const searchHint = 'Rechercher un quartier, un lieu…';
 
 Future<void> pumpApp(
   WidgetTester tester, {
@@ -218,6 +287,7 @@ Future<void> pumpApp(
   AuthRepository? authRepository,
   MyBusinessRepository? businessRepository,
   LocationService? locationService,
+  SearchRepository? searchRepository,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -235,6 +305,10 @@ Future<void> pumpApp(
           locationService ?? FakeLocationService(),
         ),
         referenceDataProvider.overrideWith((ref) async => testReference),
+        searchRepositoryProvider.overrideWithValue(
+          searchRepository ?? FakeSearchRepository(),
+        ),
+        nativeMapEnabledProvider.overrideWithValue(false),
       ],
       child: const FindSoluxApp(),
     ),

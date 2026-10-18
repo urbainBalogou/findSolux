@@ -27,6 +27,8 @@ class BusinessSearchResultResource extends JsonResource
             'longitude' => $this->longitude,
             'distance_m' => (int) round($this->distance_m),
             'is_open_now' => (bool) $this->is_open_now,
+            // Sans horaires renseignés, « fermé » serait faux : l'application n'affiche rien.
+            'has_opening_hours' => (bool) $this->opening_hours_exists,
             'is_mobile' => $this->is_mobile,
             'is_24_7' => $this->is_24_7,
             'phone' => $this->phone,

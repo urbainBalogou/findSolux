@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:findsolux/features/pro/domain/my_business.dart';
 import 'package:findsolux/features/reference/domain/reference_data.dart';
+import 'package:findsolux/features/search/domain/search_models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Réponses réelles de l'API (test/fixtures), enregistrées depuis le serveur
@@ -43,5 +44,29 @@ void main() {
     expect(business.openingHours.first.opensAt, '07:30');
     expect(business.photos.single.thumbnailUrl, endsWith('-thumb.webp'));
     expect(business.missingItems, isEmpty);
+  });
+
+  test('résultats de recherche de garages', () {
+    final garages = [
+      for (final item in fixture('search_results')['data'] as List)
+        GarageResult.fromJson(item as Map<String, dynamic>),
+    ];
+
+    expect(garages.single.name, 'Garage Essai');
+    expect(garages.single.distanceMeters, inInclusiveRange(300, 350));
+    expect(garages.single.hasOpeningHours, isTrue);
+    expect(garages.single.landmark, 'Près du marché');
+    expect(garages.single.serviceIds, hasLength(1));
+  });
+
+  test('résultats de recherche de lieux', () {
+    final places = [
+      for (final item in fixture('places')['data'] as List)
+        PlaceResult.fromJson(item as Map<String, dynamic>),
+    ];
+
+    expect(places.single.isDistrict, isTrue);
+    expect(places.single.name, 'Adidogomé');
+    expect(places.single.address, 'Lomé');
   });
 }

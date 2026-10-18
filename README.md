@@ -47,3 +47,15 @@ flutter pub get
 flutter run
 # Autre API : flutter run --dart-define=API_BASE_URL=https://.../api/v1
 ```
+
+## Clés d'API (hors Git)
+
+| Fichier | Clé | Usage | Restriction à configurer dans Google Cloud |
+|---|---|---|---|
+| `mobile/android/local.properties` | `MAPS_API_KEY` | Carte Google dans l'application Android | Maps SDK for Android + application `com.findsolux.findsolux` et son empreinte SHA-1 |
+| `mobile/ios/Flutter/Secrets.xcconfig` | `MAPS_API_KEY` | Carte Google sur iOS | Maps SDK for iOS + identifiant de l'application |
+| `backend/.env` | `GOOGLE_MAPS_SERVER_KEY` | Recherche de lieux, appelée par le serveur | Places API (New) + adresse IP du serveur |
+
+Modèles : `mobile/android/local.properties.example`, `mobile/ios/Flutter/Secrets.xcconfig.example`, `backend/.env.example`.
+Empreinte SHA-1 de debug : `cd mobile/android && ./gradlew signingReport`.
+Sans clé, la carte reste vide et la recherche de lieux ne cherche que parmi les quartiers connus.

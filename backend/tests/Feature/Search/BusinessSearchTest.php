@@ -143,6 +143,7 @@ class BusinessSearchTest extends TestCase
 
         $all = $this->search()->assertOk();
         $this->assertSame([true, false, true, false], array_column($all->json('data'), 'is_open_now'));
+        $this->assertSame([true, true, false, false], array_column($all->json('data'), 'has_opening_hours'));
 
         $openNow = $this->search(['open_now' => 1])->assertOk();
         $this->assertSame([$open->id, $alwaysOpen->id], array_column($openNow->json('data'), 'id'));

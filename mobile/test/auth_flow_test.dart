@@ -25,7 +25,7 @@ void main() {
     await tester.tap(find.byTooltip('Fermer'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Trouver un garage'), findsOneWidget);
+    expect(find.text(searchHint), findsOneWidget);
   });
 
   testWidgets('connexion complète puis ouverture de l’espace garagiste', (

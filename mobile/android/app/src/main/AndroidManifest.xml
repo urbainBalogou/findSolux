@@ -7,6 +7,10 @@
         android:label="findSolux"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- Clé Google Maps : MAPS_API_KEY dans android/local.properties. -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

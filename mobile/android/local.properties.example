@@ -1,0 +1,8 @@
+# Modèle de android/local.properties (ce fichier-ci est suivi par Git, l'autre non).
+# Flutter remplit lui-même sdk.dir et flutter.sdk ; ajoutez seulement vos clés.
+# Flutter réécrit local.properties : les commentaires y sont perdus, pas les valeurs.
+
+# Clé Google Maps pour Android. Dans la console Google Cloud, la restreindre à
+# l'application Android (com.findsolux.findsolux + empreinte SHA-1) et à
+# « Maps SDK for Android ».
+MAPS_API_KEY=

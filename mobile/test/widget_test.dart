@@ -7,7 +7,7 @@ void main() {
   testWidgets("l'application démarre sur l'espace client", (tester) async {
     await pumpApp(tester);
 
-    expect(find.text('Trouver un garage'), findsOneWidget);
+    expect(find.text(searchHint), findsOneWidget);
     expect(find.text('Rechercher'), findsOneWidget);
     expect(find.text('Favoris'), findsOneWidget);
     expect(find.text('Compte'), findsOneWidget);
@@ -33,6 +33,6 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Mode client'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Trouver un garage'), findsOneWidget);
+    expect(find.text(searchHint), findsOneWidget);
   });
 }
