@@ -191,6 +191,27 @@ void main() {
     expect(find.text('Fiche mise à jour.'), findsOneWidget);
   });
 
+  testWidgets('la position peut être ajustée sur la carte', (tester) async {
+    final repository = FakeMyBusinessRepository(testBusiness());
+    await openMyBusiness(tester, repository);
+    await tester.tap(find.text('Informations'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Ajuster sur la carte'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Faites glisser la carte'), findsOneWidget);
+
+    await tester.tap(find.text('Valider cette position'));
+    await tester.pumpAndSettle();
+    expect(find.text('Position enregistrée'), findsOneWidget);
+
+    await tester.tap(find.widgetWithText(FilledButton, 'Enregistrer'));
+    await tester.pumpAndSettle();
+
+    expect(repository.lastUpdate!['latitude'], 6.2101);
+    expect(repository.lastUpdate!['longitude'], 1.1547);
+  });
+
   test('éléments manquants d’une fiche', () {
     final business = testBusiness(
       services: const [BusinessServiceItem(serviceId: 100, priceMin: 5000)],

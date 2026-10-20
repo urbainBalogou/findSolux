@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-import '../domain/my_business.dart';
+import '../../features/pro/domain/my_business.dart';
 
 const dayNames = [
   'Lundi',

@@ -1,16 +1,20 @@
 import 'package:findsolux/app.dart';
+import 'package:findsolux/core/device/device_id.dart';
 import 'package:findsolux/core/location/location_service.dart';
 import 'package:findsolux/core/network/api_exception.dart';
 import 'package:findsolux/features/auth/data/auth_repository.dart';
 import 'package:findsolux/features/auth/data/session_storage.dart';
 import 'package:findsolux/features/auth/domain/auth_session.dart';
+import 'package:findsolux/features/garage/application/contact_launcher.dart';
+import 'package:findsolux/features/garage/data/garage_repository.dart';
+import 'package:findsolux/features/garage/domain/public_business.dart';
 import 'package:findsolux/features/pro/data/my_business_repository.dart';
 import 'package:findsolux/features/pro/domain/my_business.dart';
 import 'package:findsolux/features/reference/data/reference_repository.dart';
 import 'package:findsolux/features/reference/domain/reference_data.dart';
 import 'package:findsolux/features/search/data/search_repository.dart';
 import 'package:findsolux/features/search/domain/search_models.dart';
-import 'package:findsolux/features/search/presentation/search_screen.dart';
+import 'package:findsolux/core/maps/native_map.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -260,6 +264,7 @@ GarageResult garageResult({
 }) {
   return GarageResult(
     id: id,
+    slug: 'garage-$id',
     name: name,
     districtId: adidogome.id,
     landmark: 'Près du marché',
@@ -278,6 +283,97 @@ GarageResult garageResult({
   );
 }
 
+PublicBusiness publicGarage({
+  String slug = 'garage-1',
+  String name = 'Garage de la Paix',
+  String? whatsappPhone = '+22890123456',
+  List<OpeningRange> openingHours = const [
+    OpeningRange(day: 1, opensAt: '08:00', closesAt: '18:00'),
+  ],
+}) {
+  return PublicBusiness(
+    slug: slug,
+    name: name,
+    description: 'Spécialiste moto depuis 15 ans.',
+    districtId: adidogome.id,
+    landmark: 'Près du marché',
+    latitude: 6.2101,
+    longitude: 1.1547,
+    phone: '+22890123456',
+    whatsappPhone: whatsappPhone,
+    isMobile: true,
+    serviceRadiusKm: 5,
+    is24h: false,
+    isOpenNow: true,
+    hasOpeningHours: openingHours.isNotEmpty,
+    vehicleTypeIds: [moto.id],
+    services: [
+      BusinessServiceItem(
+        serviceId: oilChange.id,
+        priceMin: 5000,
+        priceMax: 15000,
+      ),
+      BusinessServiceItem(serviceId: brakes.id, vehicleTypeId: moto.id),
+    ],
+    openingHours: openingHours,
+    photoUrls: const [],
+    shareUrl: 'https://findsolux.tg/garages/$slug',
+  );
+}
+
+/// Fiches publiques simulées ; garde les vues et clics envoyés.
+class FakeGarageRepository implements GarageRepository {
+  FakeGarageRepository([Map<String, PublicBusiness>? garages])
+    : garages = garages ?? {'garage-1': publicGarage()};
+
+  final Map<String, PublicBusiness> garages;
+  final events = <GarageEvent>[];
+
+  @override
+  Future<PublicBusiness> fetch(String slug) async {
+    final garage = garages[slug];
+    if (garage == null) {
+      throw const ApiException('Élément introuvable.', statusCode: 404);
+    }
+    return garage;
+  }
+
+  @override
+  Future<void> recordEvent(
+    String slug,
+    GarageEvent event,
+    String deviceId,
+  ) async => events.add(event);
+}
+
+/// Ouverture du téléphone, de WhatsApp… simulée.
+class FakeContactLauncher implements ContactLauncher {
+  FakeContactLauncher({this.succeeds = true});
+
+  final bool succeeds;
+  final opened = <String>[];
+
+  @override
+  Future<bool> call(String phone) async => _record('appel $phone');
+
+  @override
+  Future<bool> whatsApp(String phone, String message) async =>
+      _record('whatsapp $phone $message');
+
+  @override
+  Future<bool> directions(double latitude, double longitude) async =>
+      _record('itineraire $latitude,$longitude');
+
+  @override
+  Future<bool> share({required String text, String? subject}) async =>
+      _record('partage $text');
+
+  bool _record(String action) {
+    opened.add(action);
+    return succeeds;
+  }
+}
+
 /// Texte d'aide de la barre de recherche de l'écran d'accueil.
 const searchHint = 'Rechercher un quartier, un lieu…';
 
@@ -288,6 +384,8 @@ Future<void> pumpApp(
   MyBusinessRepository? businessRepository,
   LocationService? locationService,
   SearchRepository? searchRepository,
+  GarageRepository? garageRepository,
+  ContactLauncher? contactLauncher,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -309,6 +407,13 @@ Future<void> pumpApp(
           searchRepository ?? FakeSearchRepository(),
         ),
         nativeMapEnabledProvider.overrideWithValue(false),
+        garageRepositoryProvider.overrideWithValue(
+          garageRepository ?? FakeGarageRepository(),
+        ),
+        contactLauncherProvider.overrideWithValue(
+          contactLauncher ?? FakeContactLauncher(),
+        ),
+        deviceIdProvider.overrideWith((ref) async => 'appareil-de-test'),
       ],
       child: const FindSoluxApp(),
     ),

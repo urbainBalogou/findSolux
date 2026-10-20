@@ -8,7 +8,7 @@ import '../../auth/application/auth_controller.dart';
 import '../../reference/domain/reference_data.dart';
 import '../application/my_business_controller.dart';
 import '../domain/my_business.dart';
-import 'formatters.dart';
+import '../../../core/formatting/formatters.dart';
 import 'widgets/form_section.dart';
 import 'widgets/location_capture.dart';
 

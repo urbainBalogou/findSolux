@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../application/my_business_controller.dart';
 import '../domain/my_business.dart';
-import 'formatters.dart';
+import '../../../core/formatting/formatters.dart';
 import 'widgets/business_editor.dart';
 
 /// Horaires d'ouverture, une plage par jour.

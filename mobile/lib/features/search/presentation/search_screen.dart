@@ -7,14 +7,11 @@ import '../../reference/data/reference_repository.dart';
 import '../../reference/domain/reference_data.dart';
 import '../application/search_controller.dart';
 import '../domain/search_models.dart';
-import 'distance_format.dart';
+import '../../../core/formatting/distance_format.dart';
+import '../../../core/maps/native_map.dart';
 import 'widgets/garage_results_panel.dart';
 import 'widgets/place_search_bar.dart';
 import 'widgets/search_filters.dart';
-
-/// Carte Google native ; remplacée par un fond neutre dans les tests, où la
-/// vue native n'existe pas.
-final nativeMapEnabledProvider = Provider<bool>((ref) => true);
 
 /// Écran d'accueil (ADR-012) : carte des garages autour de la position du
 /// client ou du lieu recherché, cartes des garages en bas, du plus proche au

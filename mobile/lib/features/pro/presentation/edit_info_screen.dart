@@ -7,7 +7,7 @@ import '../../reference/domain/reference_data.dart';
 import '../application/my_business_controller.dart';
 import '../domain/my_business.dart';
 import 'express_signup_form.dart';
-import 'formatters.dart';
+import '../../../core/formatting/formatters.dart';
 import 'widgets/business_editor.dart';
 import 'widgets/form_section.dart';
 import 'widgets/location_capture.dart';

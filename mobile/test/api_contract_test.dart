@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:findsolux/features/garage/domain/public_business.dart';
 import 'package:findsolux/features/pro/domain/my_business.dart';
 import 'package:findsolux/features/reference/domain/reference_data.dart';
 import 'package:findsolux/features/search/domain/search_models.dart';
@@ -68,5 +69,20 @@ void main() {
     expect(places.single.isDistrict, isTrue);
     expect(places.single.name, 'Adidogomé');
     expect(places.single.address, 'Lomé');
+  });
+
+  test('fiche publique d’un garage', () {
+    final garage = PublicBusiness.fromJson(
+      fixture('public_business')['data'] as Map<String, dynamic>,
+    );
+
+    expect(garage.name, 'Garage Essai');
+    expect(garage.description, 'Spécialiste moto');
+    expect(garage.isMobile, isTrue);
+    expect(garage.serviceRadiusKm, 5);
+    expect(garage.hasOpeningHours, isTrue);
+    expect(garage.services.single.priceMax, 15000);
+    expect(garage.openingHours.single.opensAt, '08:00');
+    expect(garage.shareUrl, endsWith('/garages/${garage.slug}'));
   });
 }

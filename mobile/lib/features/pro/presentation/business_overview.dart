@@ -5,7 +5,7 @@ import '../../../core/router/app_router.dart';
 import '../../auth/presentation/phone_format.dart';
 import '../../reference/domain/reference_data.dart';
 import '../domain/my_business.dart';
-import 'formatters.dart';
+import '../../../core/formatting/formatters.dart';
 
 /// Fiche inscrite : état, éléments à compléter et accès à chaque section.
 class BusinessOverview extends StatelessWidget {

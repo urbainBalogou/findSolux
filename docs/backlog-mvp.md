@@ -45,7 +45,7 @@ Ordre indicatif : chaque lot s'appuie sur les précédents.
 - [x] API photos : 8 au maximum, redimensionnées (1 280 px), converties en WebP avec vignette 400 px, métadonnées GPS supprimées ; ordre et suppression.
 - [x] Application : inscription express sur un seul écran (nom, WhatsApp prérempli avec le numéro du compte, position GPS sur place avec précision affichée, quartier proposé automatiquement, véhicules, services).
 - [x] Application : fiche avec éléments à compléter ; écrans informations, services et prix (fourchette par service), horaires (lun–sam 8 h–18 h proposés), photos (appareil photo ou galerie, réduites avant envoi, photo principale, suppression).
-- [ ] Carte Google pour ajuster la position du garage à la main.
+- [x] Carte Google pour ajuster la position du garage à la main (repère fixe, vue satellite), depuis l'inscription et la modification de la fiche.
 - [ ] Photos visibles publiquement selon la formule (lot 9) : le cahier des charges réserve les photos aux formules payantes.
 
 ## Lot 4 — Recherche (C1, C2)
@@ -61,7 +61,7 @@ Ordre indicatif : chaque lot s'appuie sur les précédents.
 - [x] API fiche publique `GET /businesses/{slug}` (sans compte), lien de partage.
 - [x] API événements `POST /businesses/{slug}/events` (vue, appel, WhatsApp, itinéraire, partage) : un appareil compte une fois par jour et par action ; ni le propriétaire ni les robots ne sont comptés.
 - [x] Pages web publiques `/garages/{slug}` (R4) : boutons Appeler, WhatsApp (message pré-rempli), Itinéraire ; aperçu WhatsApp (Open Graph) ; vues et clics comptés.
-- [ ] Application : fiche détaillée, boutons Appeler, WhatsApp, Itinéraire, Partager, événements.
+- [x] Application : fiche détaillée ouverte depuis les cartes de résultats (photos, état, distance, services et prix, horaires de la semaine, véhicules, zone d'intervention) ; boutons Appeler, WhatsApp (message pré-rempli), Itinéraire, Partager (lien de la page web) ; vues et clics envoyés sans faire attendre le client (identifiant d'appareil anonyme).
 
 ## Lot 6 — Avis et signalements (C5, C6, P7)
 

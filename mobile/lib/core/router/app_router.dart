@@ -7,6 +7,7 @@ import '../../features/auth/application/auth_controller.dart';
 import '../../features/auth/presentation/login_code_screen.dart';
 import '../../features/auth/presentation/login_phone_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
+import '../../features/garage/presentation/garage_detail_screen.dart';
 import '../../features/pro/presentation/edit_hours_screen.dart';
 import '../../features/pro/presentation/edit_info_screen.dart';
 import '../../features/pro/presentation/edit_services_screen.dart';
@@ -20,6 +21,9 @@ import '../widgets/navigation_shell_scaffold.dart';
 
 abstract final class AppRoutes {
   static const search = '/';
+
+  /// Fiche publique d'un garage, ouverte depuis les résultats.
+  static String garage(String slug) => '/garages/$slug';
   static const favorites = '/favoris';
   static const account = '/compte';
   static const login = '/connexion';
@@ -77,7 +81,17 @@ final routerProvider = Provider<GoRouter>((ref) {
           ],
         ),
         branches: [
-          _branch(AppRoutes.search, const SearchScreen()),
+          _branch(
+            AppRoutes.search,
+            const SearchScreen(),
+            routes: [
+              GoRoute(
+                path: 'garages/:slug',
+                builder: (context, state) =>
+                    GarageDetailScreen(slug: state.pathParameters['slug']!),
+              ),
+            ],
+          ),
           _branch(AppRoutes.favorites, const FavoritesScreen()),
           _branch(AppRoutes.account, const AccountScreen()),
         ],

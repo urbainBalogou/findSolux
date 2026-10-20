@@ -72,13 +72,8 @@ class GarageResultsPanel extends ConsumerWidget {
                   garage: garages[index],
                   reference: reference,
                   selected: index == selectedIndex,
-                  onTap: () => index == selectedIndex
-                      ? onPageChanged(index)
-                      : pageController.animateToPage(
-                          index,
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeOut,
-                        ),
+                  onTap: () =>
+                      context.go(AppRoutes.garage(garages[index].slug)),
                 ),
               ),
             ),

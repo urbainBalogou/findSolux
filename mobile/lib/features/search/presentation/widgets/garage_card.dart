@@ -1,9 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../garage/presentation/widgets/garage_badges.dart';
 import '../../../reference/domain/reference_data.dart';
 import '../../domain/search_models.dart';
-import '../distance_format.dart';
+import '../../../../core/formatting/distance_format.dart';
 
 /// Carte d'un garage, en surimpression en bas de la carte. La distance est
 /// affichée tout en bas.
@@ -81,19 +82,11 @@ class GarageCard extends StatelessWidget {
                               style: theme.textTheme.bodySmall,
                             ),
                           const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 4,
-                            children: [
-                              if (garage.is24h)
-                                _Badge('24 h/24', colors.tertiary)
-                              else if (garage.isOpenNow)
-                                _Badge('Ouvert', colors.tertiary)
-                              else if (garage.hasOpeningHours)
-                                _Badge('Fermé', colors.outline),
-                              if (garage.isMobile)
-                                _Badge('Se déplace', colors.secondary),
-                            ],
+                          GarageBadges(
+                            is24h: garage.is24h,
+                            isOpenNow: garage.isOpenNow,
+                            hasOpeningHours: garage.hasOpeningHours,
+                            isMobile: garage.isMobile,
                           ),
                           const Spacer(),
                           if (_services.isNotEmpty)
@@ -172,28 +165,6 @@ class _Thumbnail extends StatelessWidget {
                 placeholder: (_, _) => placeholder,
                 errorWidget: (_, _, _) => placeholder,
               ),
-      ),
-    );
-  }
-}
-
-class _Badge extends StatelessWidget {
-  const _Badge(this.label, this.color);
-
-  final String label;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(
-        border: Border.all(color: color),
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        label,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: color),
       ),
     );
   }

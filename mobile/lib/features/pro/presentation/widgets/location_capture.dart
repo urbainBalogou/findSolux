@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../core/location/location_service.dart';
+import '../position_picker_screen.dart';
 
-/// Prise de la position du garage, sur place, par le GPS du téléphone.
+/// Prise de la position du garage, sur place, par le GPS du téléphone, ou
+/// ajustement à la main sur la carte.
 class LocationCapture extends ConsumerStatefulWidget {
   const LocationCapture({
     super.key,
@@ -21,6 +24,7 @@ class LocationCapture extends ConsumerStatefulWidget {
 
 class _LocationCaptureState extends ConsumerState<LocationCapture> {
   static const _goodAccuracyMeters = 50;
+  static const _lome = LatLng(6.1319, 1.2228);
 
   bool _locating = false;
   String? _error;
@@ -38,6 +42,28 @@ class _LocationCaptureState extends ConsumerState<LocationCapture> {
     } finally {
       if (mounted) setState(() => _locating = false);
     }
+  }
+
+  Future<void> _adjustOnMap() async {
+    final fix = widget.value;
+    final picked = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => PositionPickerScreen(
+          initial: fix == null ? _lome : LatLng(fix.latitude, fix.longitude),
+        ),
+      ),
+    );
+    if (picked == null) return;
+    setState(() => _error = null);
+    // Précision 0 : position choisie à la main, sans mesure GPS.
+    widget.onChanged(
+      LocationFix(
+        latitude: picked.latitude,
+        longitude: picked.longitude,
+        accuracyMeters: 0,
+      ),
+    );
   }
 
   @override
@@ -84,10 +110,18 @@ class _LocationCaptureState extends ConsumerState<LocationCapture> {
           if (fix.accuracyMeters > _goodAccuracyMeters)
             Text(
               'Position peu précise. Placez-vous dehors, devant le garage, '
-              'puis reprenez la position.',
+              'puis reprenez la position, ou ajustez-la sur la carte.',
               style: TextStyle(color: theme.colorScheme.error),
             ),
         ],
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: _adjustOnMap,
+            icon: const Icon(Icons.edit_location_alt_outlined),
+            label: const Text('Ajuster sur la carte'),
+          ),
+        ),
         if (_error != null)
           Padding(
             padding: const EdgeInsets.only(top: 8),

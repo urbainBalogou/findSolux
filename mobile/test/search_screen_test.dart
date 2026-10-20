@@ -1,6 +1,6 @@
 import 'package:findsolux/core/location/location_service.dart';
 import 'package:findsolux/features/search/domain/search_models.dart';
-import 'package:findsolux/features/search/presentation/distance_format.dart';
+import 'package:findsolux/core/formatting/distance_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -2,6 +2,7 @@
 class GarageResult {
   const GarageResult({
     required this.id,
+    required this.slug,
     required this.name,
     required this.districtId,
     required this.landmark,
@@ -21,6 +22,7 @@ class GarageResult {
 
   factory GarageResult.fromJson(Map<String, dynamic> json) => GarageResult(
     id: json['id'] as int,
+    slug: json['slug'] as String,
     name: json['name'] as String,
     districtId: json['district_id'] as int,
     landmark: json['landmark'] as String?,
@@ -41,6 +43,9 @@ class GarageResult {
   );
 
   final int id;
+
+  /// Identifiant de la fiche publique (`/businesses/{slug}`).
+  final String slug;
   final String name;
   final int districtId;
   final String? landmark;

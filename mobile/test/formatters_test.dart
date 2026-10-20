@@ -1,5 +1,5 @@
 import 'package:findsolux/features/pro/domain/my_business.dart';
-import 'package:findsolux/features/pro/presentation/formatters.dart';
+import 'package:findsolux/core/formatting/formatters.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/test_app.dart';
