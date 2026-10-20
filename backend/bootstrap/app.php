@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Middleware\EnsureUserHasBusiness;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,4 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
+
+        // Fiche introuvable : message neutre, sans le nom interne du modèle.
+        $exceptions->render(function (NotFoundHttpException $error, Request $request) {
+            if ($request->is('api/*') && $error->getPrevious() instanceof ModelNotFoundException) {
+                return response()->json(['message' => 'Élément introuvable.'], 404);
+            }
+        });
     })->create();

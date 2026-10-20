@@ -48,6 +48,7 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('otp-request', fn (Request $request) => Limit::perMinute(10)->by($request->ip()));
         RateLimiter::for('otp-verify', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
         RateLimiter::for('search', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
+        RateLimiter::for('events', fn (Request $request) => Limit::perMinute(120)->by($request->ip()));
         // Chaque recherche de lieu peut déclencher un appel facturé à Google.
         RateLimiter::for('places', fn (Request $request) => Limit::perMinute(30)->by($request->ip()));
     }

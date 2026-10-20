@@ -34,4 +34,16 @@ final class PhoneNumber
 
         return $util->format($number, PhoneNumberFormat::E164);
     }
+
+    /**
+     * Affichage lisible d'un numéro E.164 : « +228 90 12 34 56 ».
+     */
+    public static function display(string $e164): string
+    {
+        if (preg_match('/^\+228(\d{8})$/', $e164, $match) !== 1) {
+            return $e164;
+        }
+
+        return '+228 '.implode(' ', str_split($match[1], 2));
+    }
 }

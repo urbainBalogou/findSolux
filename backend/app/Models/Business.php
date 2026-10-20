@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BusinessStatus;
+use Carbon\CarbonInterface;
 use Database\Factories\BusinessFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -88,6 +89,24 @@ class Business extends Model
     public function photos(): HasMany
     {
         return $this->hasMany(BusinessPhoto::class)->orderBy('position');
+    }
+
+    /**
+     * Ouvert à cet instant (heure de Lomé), d'après les horaires ou le
+     * dépannage 24 h/24. Même règle que la recherche (BusinessSearch).
+     */
+    public function isOpenAt(CarbonInterface $moment): bool
+    {
+        if ($this->is_24_7) {
+            return true;
+        }
+
+        $moment = $moment->clone()->setTimezone(config('findsolux.timezone'));
+        $time = $moment->format('H:i:s');
+
+        return $this->openingHours->contains(fn (OpeningHour $range) => $range->day_of_week === $moment->dayOfWeekIso
+            && $range->opens_at <= $time
+            && $range->closes_at > $time);
     }
 
     /**

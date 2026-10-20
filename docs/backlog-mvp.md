@@ -58,10 +58,10 @@ Ordre indicatif : chaque lot s'appuie sur les précédents.
 
 ## Lot 5 — Fiche publique et contact (C3, C4)
 
-- [ ] Fiche détaillée dans l'application.
-- [ ] Boutons Appeler, WhatsApp (message pré-rempli), Itinéraire, Partager.
-- [ ] Enregistrement des événements (vues, clics).
-- [ ] Pages web publiques des fiches, partageables sur WhatsApp (R4).
+- [x] API fiche publique `GET /businesses/{slug}` (sans compte), lien de partage.
+- [x] API événements `POST /businesses/{slug}/events` (vue, appel, WhatsApp, itinéraire, partage) : un appareil compte une fois par jour et par action ; ni le propriétaire ni les robots ne sont comptés.
+- [x] Pages web publiques `/garages/{slug}` (R4) : boutons Appeler, WhatsApp (message pré-rempli), Itinéraire ; aperçu WhatsApp (Open Graph) ; vues et clics comptés.
+- [ ] Application : fiche détaillée, boutons Appeler, WhatsApp, Itinéraire, Partager, événements.
 
 ## Lot 6 — Avis et signalements (C5, C6, P7)
 

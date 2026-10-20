@@ -9,6 +9,9 @@ return [
         'longitude' => [-0.3, 1.9],
     ],
 
+    // Lien d'installation de l'application, affiché sur les pages web des garages.
+    'app_download_url' => env('APP_DOWNLOAD_URL'),
+
     // Fuseau des horaires d'ouverture (« ouvert maintenant »).
     'timezone' => 'Africa/Lome',
 

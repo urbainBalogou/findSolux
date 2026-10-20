@@ -28,6 +28,16 @@ class BusinessService extends Model
         return $this->belongsTo(Service::class);
     }
 
+    /**
+     * Null : le prix vaut pour tous les véhicules pris en charge.
+     *
+     * @return BelongsTo<VehicleType, $this>
+     */
+    public function vehicleType(): BelongsTo
+    {
+        return $this->belongsTo(VehicleType::class);
+    }
+
     protected function casts(): array
     {
         return [
