@@ -1,4 +1,5 @@
 import 'package:findsolux/features/pro/domain/my_business.dart';
+import 'package:findsolux/features/reference/domain/reference_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,6 +37,32 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('1. Votre garage'), findsOneWidget);
+  });
+
+  testWidgets('un référentiel vide affiche une erreur au lieu de planter', (
+    tester,
+  ) async {
+    useTallScreen(tester);
+    await pumpApp(
+      tester,
+      storage: InMemorySessionStorage(sessionFor(phone)),
+      reference: const ReferenceData(
+        cities: [],
+        trades: [],
+        vehicleTypes: [],
+      ),
+    );
+    await tester.tap(find.text('Vous êtes garagiste ?'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Ma fiche'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('données nécessaires à l’inscription'),
+      findsOneWidget,
+    );
+    expect(find.widgetWithText(FilledButton, 'Réessayer'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('inscription express complète', (tester) async {

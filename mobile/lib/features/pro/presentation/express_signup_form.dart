@@ -16,9 +16,14 @@ import 'widgets/location_capture.dart';
 /// terrain, apparaît dans les recherches en moins de 5 minutes. Le reste de
 /// la fiche se complète ensuite.
 class ExpressSignupForm extends ConsumerStatefulWidget {
-  const ExpressSignupForm({super.key, required this.reference});
+  const ExpressSignupForm({
+    super.key,
+    required this.reference,
+    required this.onRetryReference,
+  });
 
   final ReferenceData reference;
+  final VoidCallback onRetryReference;
 
   @override
   ConsumerState<ExpressSignupForm> createState() => _ExpressSignupFormState();
@@ -37,7 +42,15 @@ class _ExpressSignupFormState extends ConsumerState<ExpressSignupForm> {
   String? _error;
   var _saving = false;
 
-  Trade get _trade => widget.reference.trades.first;
+  Trade? get _trade => widget.reference.trades.firstOrNull;
+
+  bool get _hasRequiredReferenceData {
+    final trade = _trade;
+    return trade != null &&
+        trade.services.isNotEmpty &&
+        widget.reference.districts.isNotEmpty &&
+        widget.reference.vehicleTypes.isNotEmpty;
+  }
 
   @override
   void initState() {
@@ -92,6 +105,12 @@ class _ExpressSignupFormState extends ConsumerState<ExpressSignupForm> {
   }
 
   Future<void> _submit() async {
+    final trade = _trade;
+    if (trade == null) {
+      setState(() => _error = 'Les données nécessaires sont indisponibles.');
+      return;
+    }
+
     final error = _validate();
     if (error != null) {
       setState(() => _error = error);
@@ -111,7 +130,7 @@ class _ExpressSignupFormState extends ConsumerState<ExpressSignupForm> {
           .read(myBusinessProvider.notifier)
           .create(
             NewBusiness(
-              tradeId: _trade.id,
+              tradeId: trade.id,
               name: _nameController.text.trim(),
               phone: _sameNumber ? whatsapp : phone(_callController),
               whatsappPhone: whatsapp,
@@ -135,6 +154,11 @@ class _ExpressSignupFormState extends ConsumerState<ExpressSignupForm> {
 
   @override
   Widget build(BuildContext context) {
+    if (!_hasRequiredReferenceData) {
+      return _ReferenceDataUnavailable(onRetry: widget.onRetryReference);
+    }
+
+    final trade = _trade!;
     final theme = Theme.of(context);
 
     return ListView(
@@ -208,7 +232,7 @@ class _ExpressSignupFormState extends ConsumerState<ExpressSignupForm> {
         FormSection(
           title: '5. Services proposés',
           child: ChoiceChips<Service>(
-            options: _trade.services,
+            options: trade.services,
             label: (service) => service.name,
             selected: _services,
             onChanged: (value) => setState(() => _services = value),
@@ -234,6 +258,38 @@ class _ExpressSignupFormState extends ConsumerState<ExpressSignupForm> {
         ),
         const SizedBox(height: 24),
       ],
+    );
+  }
+}
+
+class _ReferenceDataUnavailable extends StatelessWidget {
+  const _ReferenceDataUnavailable({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.cloud_off_outlined, size: 48),
+            const SizedBox(height: 16),
+            const Text(
+              'Les données nécessaires à l’inscription sont indisponibles. '
+              'Réessayez après leur chargement sur le serveur.',
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            FilledButton.tonal(
+              onPressed: onRetry,
+              child: const Text('Réessayer'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

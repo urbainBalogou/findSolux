@@ -5,6 +5,7 @@ import 'package:findsolux/core/network/api_exception.dart';
 import 'package:findsolux/features/auth/data/auth_repository.dart';
 import 'package:findsolux/features/auth/data/session_storage.dart';
 import 'package:findsolux/features/auth/domain/auth_session.dart';
+import 'package:findsolux/features/auth/domain/otp_request_result.dart';
 import 'package:findsolux/features/garage/application/contact_launcher.dart';
 import 'package:findsolux/features/garage/data/garage_repository.dart';
 import 'package:findsolux/features/garage/domain/public_business.dart';
@@ -38,13 +39,16 @@ class InMemorySessionStorage implements SessionStorage {
 
 /// API de connexion simulée : seul [validCode] est accepté.
 class FakeAuthRepository implements AuthRepository {
+  FakeAuthRepository({this.exposedOtp});
+
+  final String? exposedOtp;
   final requestedPhones = <String>[];
   var loggedOut = false;
 
   @override
-  Future<int> requestCode(String phone) async {
+  Future<OtpRequestResult> requestCode(String phone) async {
     requestedPhones.add(phone);
-    return 60;
+    return OtpRequestResult(resendIn: 60, otp: exposedOtp);
   }
 
   @override
@@ -287,6 +291,10 @@ PublicBusiness publicGarage({
   String slug = 'garage-1',
   String name = 'Garage de la Paix',
   String? whatsappPhone = '+22890123456',
+  List<BusinessServiceItem> services = const [
+    BusinessServiceItem(serviceId: 100, priceMin: 5000, priceMax: 15000),
+    BusinessServiceItem(serviceId: 101, vehicleTypeId: 2),
+  ],
   List<OpeningRange> openingHours = const [
     OpeningRange(day: 1, opensAt: '08:00', closesAt: '18:00'),
   ],
@@ -307,14 +315,7 @@ PublicBusiness publicGarage({
     isOpenNow: true,
     hasOpeningHours: openingHours.isNotEmpty,
     vehicleTypeIds: [moto.id],
-    services: [
-      BusinessServiceItem(
-        serviceId: oilChange.id,
-        priceMin: 5000,
-        priceMax: 15000,
-      ),
-      BusinessServiceItem(serviceId: brakes.id, vehicleTypeId: moto.id),
-    ],
+    services: services,
     openingHours: openingHours,
     photoUrls: const [],
     shareUrl: 'https://findsolux.tg/garages/$slug',
@@ -328,9 +329,11 @@ class FakeGarageRepository implements GarageRepository {
 
   final Map<String, PublicBusiness> garages;
   final events = <GarageEvent>[];
+  final fetches = <String>[];
 
   @override
   Future<PublicBusiness> fetch(String slug) async {
+    fetches.add(slug);
     final garage = garages[slug];
     if (garage == null) {
       throw const ApiException('Élément introuvable.', statusCode: 404);
@@ -386,6 +389,7 @@ Future<void> pumpApp(
   SearchRepository? searchRepository,
   GarageRepository? garageRepository,
   ContactLauncher? contactLauncher,
+  ReferenceData reference = testReference,
 }) async {
   await tester.pumpWidget(
     ProviderScope(
@@ -402,7 +406,7 @@ Future<void> pumpApp(
         locationServiceProvider.overrideWithValue(
           locationService ?? FakeLocationService(),
         ),
-        referenceDataProvider.overrideWith((ref) async => testReference),
+        referenceDataProvider.overrideWith((ref) async => reference),
         searchRepositoryProvider.overrideWithValue(
           searchRepository ?? FakeSearchRepository(),
         ),

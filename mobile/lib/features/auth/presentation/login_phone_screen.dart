@@ -43,13 +43,11 @@ class _LoginPhoneScreenState extends ConsumerState<LoginPhoneScreen> {
     });
 
     try {
-      final resendIn = await ref
-          .read(authRepositoryProvider)
-          .requestCode(phone);
+      final result = await ref.read(authRepositoryProvider).requestCode(phone);
       if (!mounted) return;
       context.push(
         AppRoutes.loginCodeLocation(phone: phone, from: widget.from),
-        extra: resendIn,
+        extra: result,
       );
     } on ApiException catch (error) {
       setState(() => _error = error.message);

@@ -45,12 +45,29 @@ void main() {
     expect(api.requestedPhones, ['+22890123456']);
     expect(find.textContaining('+228 90 12 34 56'), findsOneWidget);
     expect(find.text('Renvoyer le code dans 60 s'), findsOneWidget);
+    expect(find.textContaining('Code de test'), findsNothing);
 
     await tester.enterText(find.byType(TextField), validCode);
     await tester.pumpAndSettle();
 
     expect(find.text('Mon garage'), findsOneWidget);
     expect(storage.session?.user.phone, '+22890123456');
+  });
+
+  testWidgets('le code transmis par le serveur est affiché', (tester) async {
+    await pumpApp(
+      tester,
+      authRepository: FakeAuthRepository(exposedOtp: validCode),
+    );
+    await tester.tap(find.text('Compte'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Se connecter'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '90123456');
+    await tester.tap(find.text('Recevoir le code'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Code de test : $validCode'), findsOneWidget);
   });
 
   testWidgets('un numéro incomplet est signalé sans appeler l’API', (

@@ -35,9 +35,9 @@ class MyBusiness {
     latitude: (json['latitude'] as num).toDouble(),
     longitude: (json['longitude'] as num).toDouble(),
     landmark: json['landmark'] as String?,
-    isMobile: json['is_mobile'] as bool,
+    isMobile: json['is_mobile'] as bool? ?? false,
     serviceRadiusKm: json['service_radius_km'] as int?,
-    is24h: json['is_24_7'] as bool,
+    is24h: json['is_24_7'] as bool? ?? false,
     vehicleTypeIds: [
       for (final id in json['vehicle_type_ids'] as List) id as int,
     ],

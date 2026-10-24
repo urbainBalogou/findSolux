@@ -53,10 +53,20 @@ class OtpAuthenticationTest extends TestCase
     {
         $this->requestCode($input)
             ->assertStatus(202)
-            ->assertJson(['expires_in' => 300, 'resend_in' => 60]);
+            ->assertJson(['expires_in' => 300, 'resend_in' => 60])
+            ->assertJsonMissingPath('otp');
 
         $this->assertMatchesRegularExpression('/^\d{6}$/', $this->sender()->lastCodeFor(self::PHONE));
         $this->assertDatabaseMissing('otp_codes', ['code_hash' => $this->sender()->lastCodeFor(self::PHONE)]);
+    }
+
+    public function test_the_code_is_returned_only_when_show_otp_is_enabled(): void
+    {
+        config(['otp.show_otp' => true]);
+
+        $response = $this->requestCode()->assertStatus(202);
+
+        $response->assertJsonPath('otp', $this->sender()->lastCodeFor(self::PHONE));
     }
 
     /**

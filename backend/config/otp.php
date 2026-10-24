@@ -9,6 +9,10 @@ return [
     // « array » (tests). Le pilote SMS sera ajouté avec le choix du fournisseur.
     'driver' => env('OTP_DRIVER', 'log'),
 
+    // Développement uniquement : inclut le code dans la réponse de demande
+    // afin que l'application mobile puisse l'afficher.
+    'show_otp' => env('SHOW_OTP', false),
+
     // Seuls les numéros mobiles de ce pays sont acceptés en phase 1.
     'region' => env('OTP_REGION', 'TG'),
 

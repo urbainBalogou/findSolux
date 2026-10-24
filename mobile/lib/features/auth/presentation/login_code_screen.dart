@@ -12,13 +12,21 @@ import 'phone_format.dart';
 /// Connexion, étape 2 : saisie du code reçu par SMS. Une fois la session
 /// ouverte, le routeur renvoie vers la page d'origine.
 class LoginCodeScreen extends ConsumerStatefulWidget {
-  const LoginCodeScreen({super.key, required this.phone, this.resendIn = 60});
+  const LoginCodeScreen({
+    super.key,
+    required this.phone,
+    this.resendIn = 60,
+    this.otp,
+  });
 
   /// Numéro au format E.164.
   final String phone;
 
   /// Secondes avant de pouvoir demander un nouveau code.
   final int resendIn;
+
+  /// Code de développement éventuellement transmis par le serveur.
+  final String? otp;
 
   @override
   ConsumerState<LoginCodeScreen> createState() => _LoginCodeScreenState();
@@ -30,12 +38,14 @@ class _LoginCodeScreenState extends ConsumerState<LoginCodeScreen> {
   final _codeController = TextEditingController();
   Timer? _timer;
   late int _secondsLeft;
+  String? _visibleOtp;
   String? _error;
   bool _busy = false;
 
   @override
   void initState() {
     super.initState();
+    _visibleOtp = widget.otp;
     _startCountdown(widget.resendIn);
   }
 
@@ -84,12 +94,13 @@ class _LoginCodeScreenState extends ConsumerState<LoginCodeScreen> {
     });
 
     try {
-      final resendIn = await ref
+      final result = await ref
           .read(authRepositoryProvider)
           .requestCode(widget.phone);
       if (!mounted) return;
       _codeController.clear();
-      _startCountdown(resendIn);
+      _visibleOtp = result.otp;
+      _startCountdown(result.resendIn);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Nouveau code envoyé.')));
@@ -115,6 +126,23 @@ class _LoginCodeScreenState extends ConsumerState<LoginCodeScreen> {
             style: theme.textTheme.bodyLarge,
           ),
           const SizedBox(height: 24),
+          if (_visibleOtp != null) ...[
+            Card(
+              color: theme.colorScheme.secondaryContainer,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Code de test : $_visibleOtp',
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 4,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           TextField(
             controller: _codeController,
             autofocus: true,

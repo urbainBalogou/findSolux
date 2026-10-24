@@ -18,12 +18,13 @@ class AuthController extends Controller
 
     public function requestCode(RequestOtpRequest $request): JsonResponse
     {
-        $this->otp->send($request->phone(), $request->ip());
+        $code = $this->otp->send($request->phone(), $request->ip());
 
         return response()->json([
             'message' => 'Un code de connexion vous a été envoyé par SMS.',
             'expires_in' => config('otp.ttl'),
             'resend_in' => config('otp.resend_cooldown'),
+            ...(config('otp.show_otp') ? ['otp' => $code] : []),
         ], 202);
     }
 

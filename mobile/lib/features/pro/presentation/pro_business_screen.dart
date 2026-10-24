@@ -34,7 +34,10 @@ class ProBusinessScreen extends ConsumerWidget {
           value: business,
           onRetry: () => ref.invalidate(myBusinessProvider),
           builder: (data) => data == null
-              ? ExpressSignupForm(reference: reference)
+              ? ExpressSignupForm(
+                  reference: reference,
+                  onRetryReference: () => ref.invalidate(referenceDataProvider),
+                )
               : BusinessOverview(business: data, reference: reference),
         ),
       ),

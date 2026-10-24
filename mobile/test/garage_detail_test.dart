@@ -1,4 +1,5 @@
 import 'package:findsolux/features/garage/domain/public_business.dart';
+import 'package:findsolux/features/pro/domain/my_business.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -120,6 +121,34 @@ void main() {
       find.text('Horaires non renseignés : appelez avant de passer.'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('rouvrir une fiche recharge les prix et horaires modifiés', (
+    tester,
+  ) async {
+    final garages = FakeGarageRepository({
+      'garage-1': publicGarage(
+        services: const [BusinessServiceItem(serviceId: 100)],
+        openingHours: const [],
+      ),
+    });
+    await openGarage(tester, garages: garages);
+
+    expect(find.text('Prix sur demande'), findsOneWidget);
+    expect(
+      find.text('Horaires non renseignés : appelez avant de passer.'),
+      findsOneWidget,
+    );
+
+    garages.garages['garage-1'] = publicGarage();
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Garage de la Paix'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('5 000 – 15 000 FCFA'), findsOneWidget);
+    expect(find.text('08:00–18:00'), findsOneWidget);
+    expect(garages.fetches, ['garage-1', 'garage-1']);
   });
 
   testWidgets('une fiche introuvable propose de réessayer', (tester) async {

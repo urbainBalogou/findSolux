@@ -47,6 +47,20 @@ void main() {
     expect(business.missingItems, isEmpty);
   });
 
+  test('les booléens par défaut tolèrent une ancienne réponse nulle', () {
+    final data =
+        Map<String, dynamic>.from(
+            fixture('my_business')['data'] as Map<String, dynamic>,
+          )
+          ..['is_mobile'] = null
+          ..['is_24_7'] = null;
+
+    final business = MyBusiness.fromJson(data);
+
+    expect(business.isMobile, isFalse);
+    expect(business.is24h, isFalse);
+  });
+
   test('résultats de recherche de garages', () {
     final garages = [
       for (final item in fixture('search_results')['data'] as List)

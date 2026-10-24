@@ -39,9 +39,10 @@ final garageRepositoryProvider = Provider<GarageRepository>(
   (ref) => GarageRepository(ref.watch(dioProvider)),
 );
 
-final garageDetailProvider = FutureProvider.family<PublicBusiness, String>(
-  (ref, slug) => ref.watch(garageRepositoryProvider).fetch(slug),
-);
+final garageDetailProvider = FutureProvider.autoDispose
+    .family<PublicBusiness, String>(
+      (ref, slug) => ref.watch(garageRepositoryProvider).fetch(slug),
+    );
 
 /// Envoi des vues et des clics, sans faire attendre le client : un échec
 /// (réseau coupé…) ne l'empêche jamais d'appeler le garage.

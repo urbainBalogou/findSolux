@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/account/presentation/account_screen.dart';
 import '../../features/auth/application/auth_controller.dart';
+import '../../features/auth/domain/otp_request_result.dart';
 import '../../features/auth/presentation/login_code_screen.dart';
 import '../../features/auth/presentation/login_phone_screen.dart';
 import '../../features/favorites/presentation/favorites_screen.dart';
@@ -143,10 +144,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.loginCode,
         redirect: (context, state) =>
             state.uri.queryParameters['phone'] == null ? AppRoutes.login : null,
-        builder: (context, state) => LoginCodeScreen(
-          phone: state.uri.queryParameters['phone']!,
-          resendIn: state.extra is int ? state.extra! as int : 60,
-        ),
+        builder: (context, state) {
+          final result = state.extra is OtpRequestResult
+              ? state.extra! as OtpRequestResult
+              : null;
+          return LoginCodeScreen(
+            phone: state.uri.queryParameters['phone']!,
+            resendIn: result?.resendIn ?? 60,
+            otp: result?.otp,
+          );
+        },
       ),
     ],
   );

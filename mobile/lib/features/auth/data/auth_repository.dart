@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_exception.dart';
 import '../domain/auth_session.dart';
+import '../domain/otp_request_result.dart';
 
 /// Connexion par numéro de téléphone et code reçu par SMS (ADR-007).
 /// Toutes les méthodes lèvent [ApiException] en cas d'échec.
@@ -13,15 +14,19 @@ class AuthRepository {
 
   final Dio _dio;
 
-  /// Demande l'envoi d'un code. Retourne le délai, en secondes, avant de
-  /// pouvoir en redemander un.
-  Future<int> requestCode(String phone) {
+  /// Demande l'envoi d'un code. Le code lui-même n'est présent que lorsque
+  /// le serveur autorise explicitement son affichage en développement.
+  Future<OtpRequestResult> requestCode(String phone) {
     return guardApi(() async {
       final response = await _dio.post<Map<String, dynamic>>(
         '/auth/otp',
         data: {'phone': phone},
       );
-      return response.data!['resend_in'] as int;
+      final data = response.data!;
+      return OtpRequestResult(
+        resendIn: data['resend_in'] as int,
+        otp: data['otp'] as String?,
+      );
     });
   }
 

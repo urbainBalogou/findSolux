@@ -87,6 +87,8 @@ class MyBusinessTest extends TestCase
             ->assertJsonPath('data.phone', '+22890123456')
             ->assertJsonPath('data.whatsapp_phone', '+22890123456')
             ->assertJsonPath('data.city_id', District::firstWhere('slug', 'adidogome')->city_id)
+            ->assertJsonPath('data.is_mobile', false)
+            ->assertJsonPath('data.is_24_7', false)
             ->assertJsonCount(2, 'data.services');
 
         $this->assertEqualsCanonicalizing(

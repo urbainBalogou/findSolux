@@ -16,7 +16,7 @@ class OtpService
      *
      * @throws OtpThrottledException
      */
-    public function send(string $phone, ?string $ipAddress = null): void
+    public function send(string $phone, ?string $ipAddress = null): string
     {
         $this->ensureCanSend($phone);
 
@@ -31,8 +31,13 @@ class OtpService
             'expires_at' => now()->addSeconds(config('otp.ttl')),
             'ip_address' => $ipAddress,
         ]);
+        if (config('otp.show_otp')) {
+            Log::info("Code {$code} de connexion envoyé à {$phone} via {$this->sender->channel()}.");
+        }
 
         $this->sender->send($phone, $code);
+
+        return $code;
     }
 
     /**

@@ -4,6 +4,7 @@ abstract final class AppConfig {
   /// Par défaut : API Laravel locale vue depuis l'émulateur Android.
   static const apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.0.2.2:8000/api/v1',
+    // defaultValue: 'http://10.0.2.2:8000/api/v1',
+    defaultValue: 'http://10.80.15.221:8000/api/v1'
   );
 }

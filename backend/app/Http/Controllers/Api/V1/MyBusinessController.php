@@ -60,7 +60,9 @@ class MyBusinessController extends Controller
             return response()->json(['message' => 'Vous avez déjà inscrit un garage.'], 409);
         }
 
-        return (new MyBusinessResource($business->load(MyBusinessResource::RELATIONS)))
+        // Recharge les valeurs par défaut appliquées par MySQL (notamment les
+        // booléens is_mobile et is_24_7) avant de construire la réponse 201.
+        return (new MyBusinessResource($business->refresh()->load(MyBusinessResource::RELATIONS)))
             ->response()
             ->setStatusCode(201);
     }
