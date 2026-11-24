@@ -1,0 +1,14 @@
+# Les sous-projets (backend/, mobile/) ont leur propre .gitignore.
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.env
+
+# Journaux de plantage de Java (Gradle, Android Studio).
+hs_err_pid*.log
+replay_pid*.log
+
+# Configuration Firebase (ADR-016) : jamais dans Git, où qu'elle soit posée.
+**/google-services.json
+**/GoogleService-Info.plist

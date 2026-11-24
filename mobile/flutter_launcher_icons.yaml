@@ -1,0 +1,19 @@
+# Icône de l'application. Après un changement de logo : dart run flutter_launcher_icons
+# Images de assets/branding/, tirées de assets/images/logo-findsolux.jpeg :
+# - icon_ios.png : logo recadré sur son carré arrondi, 1024 px ;
+# - splash.png : logo entier réduit à 640 px ;
+# - splash_android12.png : splash.png centré sur un fond noir de 1152 px.
+flutter_launcher_icons:
+  image_path: "assets/images/logo-findsolux.jpeg"
+  android: "ic_launcher"
+  min_sdk_android: 26
+  # Android 8+ : icône adaptative. Le fond noir prolonge celui du logo, et la
+  # marge garde le carré arrondi entier, même quand le téléphone découpe
+  # l'icône en cercle.
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/images/logo-findsolux.jpeg"
+  adaptive_icon_foreground_inset: 23
+  # iOS applique son propre arrondi : logo recadré sur son carré, sans transparence.
+  ios: true
+  image_path_ios: "assets/branding/icon_ios.png"
+  remove_alpha_ios: true

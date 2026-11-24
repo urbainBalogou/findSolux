@@ -1,0 +1,42 @@
+<?php
+
+use App\Http\Middleware\EnsurePersonalAccount;
+use App\Http\Middleware\EnsureUserHasBusiness;
+use App\Http\Middleware\EnsureUserWorksAtBusiness;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(
+            fn (Request $request) => $request->is('admin', 'admin/*') ? route('admin.login') : null,
+        );
+
+        $middleware->alias([
+            'has.business' => EnsureUserHasBusiness::class,
+            'personal.account' => EnsurePersonalAccount::class,
+            'works.at.business' => EnsureUserWorksAtBusiness::class,
+        ]);
+    })
+    ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->shouldRenderJsonWhen(
+            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+        );
+
+        // Fiche introuvable : message neutre, sans le nom interne du modèle.
+        $exceptions->render(function (NotFoundHttpException $error, Request $request) {
+            if ($request->is('api/*') && $error->getPrevious() instanceof ModelNotFoundException) {
+                return response()->json(['message' => 'Élément introuvable.'], 404);
+            }
+        });
+    })->create();

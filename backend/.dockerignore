@@ -1,0 +1,54 @@
+# Contexte de construction de l'image (Dockerfile) : ni secrets, ni fichiers
+# générés sur le poste, ni données locales.
+
+# Secrets
+.env
+.env.*
+!.env.example
+auth.json
+storage/*.key
+storage/firebase/
+**/firebase-credentials*.json
+
+# Dépendances et fichiers générés : reconstruits dans l'image.
+vendor/
+node_modules/
+public/build/
+public/hot
+public/storage
+# Caches de Laravel générés sur le poste : ils citent des paquets de
+# développement absents de l'image.
+bootstrap/cache/*.php
+
+# Données locales : photos envoyées, journaux, caches, sessions.
+storage/app/public/*
+!storage/app/public/.gitignore
+storage/app/private/*
+!storage/app/private/.gitignore
+storage/framework/cache/data/*
+!storage/framework/cache/data/.gitignore
+storage/framework/cache/locks/*
+!storage/framework/cache/locks/.gitignore
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+storage/framework/testing/*
+!storage/framework/testing/.gitignore
+storage/framework/views/*
+!storage/framework/views/.gitignore
+storage/logs/*
+!storage/logs/.gitignore
+storage/pail/
+**/*.log
+
+# Tests et outils du poste
+tests/
+phpunit.xml
+.phpunit.cache/
+.phpunit.result.cache
+.git
+.claude/
+.codex/
+.cursor/
+.idea/
+.vscode/
+.zed/

@@ -1,0 +1,54 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Laravel : écouter Xdebug (9003)",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "cwd": "${workspaceFolder}/backend",
+            "stopOnEntry": false,
+            "skipFiles": [
+                "${workspaceFolder}/backend/vendor/**/*.php"
+            ],
+            "xdebugSettings": {
+                "max_children": 128,
+                "max_data": 1024,
+                "max_depth": 5
+            }
+        },
+        {
+            "name": "Laravel : démarrer et déboguer (port 8000)",
+            "type": "php",
+            "request": "launch",
+            "program": "${workspaceFolder}/backend/artisan",
+            "cwd": "${workspaceFolder}/backend",
+            "runtimeExecutable": "php",
+            "runtimeArgs": [
+                "-dxdebug.mode=debug,develop",
+                "-dxdebug.start_with_request=yes",
+                "-dxdebug.client_host=127.0.0.1",
+                "-dxdebug.client_port=9003"
+            ],
+            "args": [
+                "serve",
+                "--host=0.0.0.0",
+                "--port=8000"
+            ],
+            "port": 9003,
+            "stopOnEntry": false,
+            "env": {
+                "XDEBUG_MODE": "debug,develop",
+                "XDEBUG_CONFIG": "client_host=127.0.0.1 client_port=9003"
+            },
+            "skipFiles": [
+                "${workspaceFolder}/backend/vendor/**/*.php"
+            ],
+            "xdebugSettings": {
+                "max_children": 128,
+                "max_data": 1024,
+                "max_depth": 5
+            }
+        }
+    ]
+}

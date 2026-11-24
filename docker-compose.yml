@@ -1,0 +1,74 @@
+# Développement local avec Docker, sans PHP ni MySQL installés sur le poste :
+# MySQL 8.4 (même moteur que la production, ADR-011), API et back-office en
+# PHP 8.3, file d'attente (notifications push) et tâches planifiées (offres,
+# demandes expirées). Le code de backend/ est partagé : pas de reconstruction
+# de l'image à chaque modification.
+#
+#   docker compose up -d --build
+#   docker compose exec api composer install              # première fois
+#   docker compose exec api php artisan migrate --seed
+#   → http://localhost:8000/api/v1/health
+#
+# Ne pas lancer en même temps que le MySQL de XAMPP (même port 3306), ou
+# changer FORWARD_DB_PORT. FORWARD_API_PORT change le port de l'API.
+
+x-backend: &backend
+  build:
+    context: ./backend
+    target: dev
+  image: findsolux-api:dev
+  restart: unless-stopped
+  volumes:
+    - ./backend:/var/www/html
+  environment:
+    # Remplacent DB_HOST et DB_PORT de backend/.env, prévus pour XAMPP.
+    DB_HOST: db
+    DB_PORT: 3306
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: findsolux-db
+    restart: unless-stopped
+    environment:
+      # Développement local uniquement : root sans mot de passe, comme XAMPP,
+      # pour garder le même backend/.env quel que soit le serveur utilisé.
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: findsolux
+      TZ: Africa/Lome
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    ports:
+      - "127.0.0.1:${FORWARD_DB_PORT:-3306}:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # API et back-office (Apache) : http://localhost:8000, comme « php artisan serve ».
+  api:
+    <<: *backend
+    container_name: findsolux-api
+    ports:
+      - "127.0.0.1:${FORWARD_API_PORT:-8000}:80"
+
+  # Notifications push (file d'attente « database »).
+  queue:
+    <<: *backend
+    container_name: findsolux-queue
+    command: ["php", "artisan", "queue:work", "--tries=3"]
+
+  # Offres (renouvellement, rappels, échéances) et demandes sans réponse.
+  scheduler:
+    <<: *backend
+    container_name: findsolux-scheduler
+    command: ["php", "artisan", "schedule:work"]
+
+volumes:
+  db-data:

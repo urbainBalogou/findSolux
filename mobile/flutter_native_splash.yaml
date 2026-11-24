@@ -1,0 +1,15 @@
+# Écran de démarrage, affiché jusqu'à la première image de l'application.
+# Après un changement de logo : dart run flutter_native_splash:create
+flutter_native_splash:
+  # Fond noir, comme le pourtour du logo, en mode clair comme en mode sombre.
+  color: "#000000"
+  # Logo de 640 px, affiché à 160 dp.
+  image: assets/branding/splash.png
+
+  # Android 12+ impose son propre écran : logo centré dans un cercle de 768 px
+  # sur une image de 1152 px.
+  android_12:
+    color: "#000000"
+    image: assets/branding/splash_android12.png
+
+  web: false

@@ -1,0 +1,44 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "type": "membership",
+      "name": "Adhésion mensuelle",
+      "is_purchasable": true,
+      "quantity": null,
+      "price": {
+        "amount": 5000,
+        "currency": "XOF"
+      },
+      "duration": {
+        "type": "limited",
+        "value": 1,
+        "unit": "month"
+      },
+      "position": 1
+    },
+    {
+      "id": 2,
+      "type": "staff_bundle",
+      "name": "Équipe de 3 personnes",
+      "is_purchasable": false,
+      "quantity": 3,
+      "price": {
+        "amount": 8000,
+        "currency": "XOF"
+      },
+      "duration": {
+        "type": "unlimited",
+        "value": null,
+        "unit": null
+      },
+      "position": 1
+    }
+  ],
+  "meta": {
+    "acceptance_price": {
+      "amount": 500,
+      "currency": "XOF"
+    }
+  }
+}
